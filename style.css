@@ -390,3 +390,25 @@ body {
     height: 340px;
   }
 }
+
+
+/* QGIS2Web experience map */
+.experience-map-frame {
+    display: block;
+    width: 100%;
+    height: 620px;
+    border: 0;
+    background: #F7F5EF;
+}
+
+.map-shell {
+    width: 100%;
+    overflow: hidden;
+    background: #F7F5EF;
+}
+
+@media (max-width: 768px) {
+    .experience-map-frame {
+        height: 480px;
+    }
+}
