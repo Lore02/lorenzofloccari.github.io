@@ -1,7 +1,188 @@
-1. Hero Image
-2. Intro
-3. Bottone Experience Map
-4. Featured Projects
-5. About Me
-6. Skills
-7. Contact
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Lorenzo Floccari — Humanitarian Data Analyst, GIS Specialist and Climate Risk Analyst.">
+  <meta name="theme-color" content="#f8fafc">
+  <title>Lorenzo Floccari | GIS & Humanitarian Data</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header" id="top">
+    <a class="brand" href="#top" aria-label="Lorenzo Floccari homepage">
+      <span class="brand-mark" aria-hidden="true">LF</span>
+      <span class="brand-copy"><strong>Lorenzo Floccari</strong><small>GIS &amp; International Development</small></span>
+    </a>
+
+    <button class="menu-toggle" id="menuToggle" aria-label="Open navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav class="main-nav" id="mainNav" aria-label="Main navigation">
+      <a href="#about">About</a>
+      <a href="#experience">Experience</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a class="header-github" href="https://github.com/Lore02" target="_blank" rel="noopener" aria-label="GitHub profile">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.55.1.76-.24.76-.53v-2.07c-3.1.67-3.76-1.32-3.76-1.32-.5-1.28-1.23-1.62-1.23-1.62-1.01-.69.08-.68.08-.68 1.12.08 1.71 1.15 1.71 1.15 1 .1.8 2.27 3.37 1.61.1-.72.39-1.21.7-1.49-2.48-.28-5.09-1.24-5.09-5.52 0-1.22.44-2.22 1.15-3-.12-.28-.5-1.42.11-2.96 0 0 .94-.3 3.05 1.15a10.6 10.6 0 0 1 5.55 0c2.11-1.45 3.05-1.15 3.05-1.15.61 1.54.23 2.68.11 2.96.72.78 1.15 1.78 1.15 3 0 4.29-2.62 5.23-5.11 5.51.4.35.75 1.03.75 2.08V22c0 .29.2.64.77.53A11.1 11.1 0 0 0 12 .9Z"/></svg>
+    </a>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-image" role="img" aria-label="Sahel landscape with acacia tree"></div>
+      <div class="hero-shade"></div>
+      <div class="hero-content">
+        <p class="eyebrow light">GEOSPATIAL ANALYSIS · HUMANITARIAN ACTION · CLIMATE RESILIENCE</p>
+        <h1 id="hero-title">Mapping people,<br>building resilience.</h1>
+        <p class="hero-lead">Geospatial analysis for a more resilient and equitable world.</p>
+        <p class="hero-description">Applying GIS, remote sensing and data-driven approaches to support humanitarian action, food security and climate-risk analysis.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#projects">Explore projects <span aria-hidden="true">↗</span></a>
+          <a class="button button-glass" href="#experience">View experience map <span aria-hidden="true">↓</span></a>
+        </div>
+      </div>
+      <div class="hero-note"><span class="note-dot"></span> Based in Senegal · Working across geospatial and humanitarian data</div>
+    </section>
+
+    <section class="section experience-section" id="experience">
+      <div class="section-heading map-heading">
+        <div>
+          <p class="eyebrow">A GEOGRAPHY OF EXPERIENCE</p>
+          <h2>My experience across places</h2>
+          <p class="section-intro">An overview of the places that have shaped my academic and professional journey.</p>
+        </div>
+        <span class="map-key"><i class="key-dot work"></i> Professional experience <i class="key-dot education"></i> Education</span>
+      </div>
+      <div class="map-shell">
+        <div id="experienceMap" aria-label="Interactive map showing education and professional experience locations"></div>
+        <div class="map-caption"><span>Explore the markers to discover roles, organisations and study locations.</span><span>Map data © OpenStreetMap contributors</span></div>
+      </div>
+    </section>
+
+    <section class="section projects-section" id="projects">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">SELECTED WORK</p>
+          <h2>Projects &amp; research</h2>
+          <p class="section-intro">Applied geospatial analysis at the intersection of climate, livelihoods and human security.</p>
+        </div>
+        <a class="text-link" href="https://github.com/Lore02" target="_blank" rel="noopener">Explore GitHub <span aria-hidden="true">→</span></a>
+      </div>
+
+      <div class="project-grid">
+        <article class="project-card">
+          <div class="project-image image-flood"><span class="project-number">01 / GIS</span></div>
+          <div class="project-body">
+            <p class="project-location">MATAM · SENEGAL</p>
+            <h3>Flood Susceptibility Assessment</h3>
+            <p>Exploring topographic flood susceptibility and potential exposure using elevation, terrain and hydrological indicators, with a focus on agricultural areas.</p>
+            <div class="tags"><span>QGIS</span><span>DEM</span><span>CHIRPS</span><span>Spatial analysis</span></div>
+            <span class="project-status">Independent project · In development</span>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <div class="project-image image-drought"><span class="project-number">02 / CLIMATE</span></div>
+          <div class="project-body">
+            <p class="project-location">LOUGA &amp; MATAM · SENEGAL</p>
+            <h3>Drought Monitoring</h3>
+            <p>Monitoring rainfall and vegetation conditions to explore drought patterns and their potential implications for agricultural livelihoods and food security.</p>
+            <div class="tags"><span>CHIRPS</span><span>NDVI</span><span>QGIS</span><span>Power BI</span></div>
+            <span class="project-status">Analytical work · In development</span>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <div class="project-image image-geoai"><span class="project-number">03 / GEOAI</span></div>
+          <div class="project-body">
+            <p class="project-location">METHODS &amp; LEARNING</p>
+            <h3>GeoAI &amp; Predictive Risk Analysis</h3>
+            <p>Developing skills in Python and machine learning, with an interest in applying predictive geospatial methods to environmental and humanitarian risk analysis.</p>
+            <div class="tags"><span>Python</span><span>Machine learning</span><span>GeoAI</span></div>
+            <span class="project-status">Learning track · In development</span>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <div class="project-image image-thesis"><span class="project-number">04 / RESEARCH</span></div>
+          <div class="project-body">
+            <p class="project-location">LA GUAJIRA · COLOMBIA</p>
+            <h3>Climate Change &amp; Food Insecurity</h3>
+            <p>Master’s thesis research on climate change, food insecurity and economic vulnerability, examining responses to El Niño in La Guajira in collaboration with Action Against Hunger Madrid.</p>
+            <div class="tags"><span>Human security</span><span>Climate vulnerability</span><span>Research</span></div>
+            <span class="project-status">Master’s thesis research</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="about-band" id="about">
+      <div class="about-inner">
+        <div class="about-label">
+          <p class="eyebrow light">ABOUT</p>
+          <h2>Data with a<br>human purpose.</h2>
+        </div>
+        <div class="about-copy">
+          <p class="about-lead">I am an Italian humanitarian data professional currently based in Senegal, working at the intersection of GIS, food security, monitoring and evaluation, and climate-risk analysis.</p>
+          <p>My academic background in International Relations and Human Security, combined with professional experience in humanitarian and development contexts, has shaped my interest in the spatial dimensions of vulnerability. I use geospatial tools and data analysis to help turn complex information into evidence that can support more informed decisions.</p>
+          <p>My interests include geospatial analysis, disaster risk reduction, remote sensing and data-driven humanitarian decision-making.</p>
+          <a class="button button-outline-light" href="#contact">Get in touch <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section skills-section" id="skills">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">TOOLS &amp; EXPERTISE</p>
+          <h2>Skills &amp; capabilities</h2>
+          <p class="section-intro">A multidisciplinary toolkit for geospatial and humanitarian analysis.</p>
+        </div>
+      </div>
+      <div class="skills-grid">
+        <article class="skill-card">
+          <div class="skill-icon">⌖</div><h3>GIS &amp; Remote Sensing</h3>
+          <div class="skill-list"><span>QGIS</span><span>Leaflet</span><span>OpenStreetMap</span><span>Copernicus data</span><span>Sentinel-1 / Sentinel-2</span><span>CHIRPS</span><span>Raster &amp; vector analysis</span></div>
+        </article>
+        <article class="skill-card">
+          <div class="skill-icon">⌘</div><h3>Data &amp; Analysis</h3>
+          <div class="skill-list"><span>R / RStudio</span><span>Python</span><span>Excel</span><span>Power BI</span><span>Quantitative methods</span><span>Data visualisation</span><span>ActivityInfo</span><span>KoboToolbox</span></div>
+        </article>
+        <article class="skill-card">
+          <div class="skill-icon">◎</div><h3>Humanitarian &amp; Climate</h3>
+          <div class="skill-list"><span>Food security</span><span>MEAL</span><span>Climate risk</span><span>Vulnerability analysis</span><span>Monitoring &amp; evaluation</span><span>Needs assessments</span><span>Humanitarian data</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="contact-section" id="contact">
+      <div class="contact-inner">
+        <div><p class="eyebrow light">CONTACT</p><h2>Let’s connect.</h2><p>For professional opportunities, research collaborations and geospatial projects.</p></div>
+        <div class="contact-links">
+          <a href="https://github.com/Lore02" target="_blank" rel="noopener"><span class="contact-symbol">GH</span><span><strong>GitHub</strong><small>Explore code and projects</small></span><b>↗</b></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <a class="footer-brand" href="#top">Lorenzo Floccari</a>
+    <span>© <span id="year">2026</span> Lorenzo Floccari</span>
+    <span>Humanitarian Data&nbsp; · &nbsp;GIS&nbsp; · &nbsp;Climate Risk</span>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="script.js"></script>
+</body>
+</html>
