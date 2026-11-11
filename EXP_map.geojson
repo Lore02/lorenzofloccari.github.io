@@ -1,15 +1,77 @@
-{
-"type": "FeatureCollection",
-"name": "EXP_map",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::3857" } },
-"features": [
-{"type":"Feature","properties":{"city":"Madrid","country":"Spain","category":"Professional experience","organization":"Action Against Hunger","role":"Food Security and Livelihoods (FSL) Assistant","period":"February 2025 – June 2025","description":"Drought Risk Analysis\nSoil Moisture Analysis\nBeneficiary Targeting\nInclusion & Exclusion Errors\nQGIS","featured":null,"layer":"Aarhus","path":"C:\\Users\\flocc\\Desktop\\Experience_MAP\\Layer experiences map.gpkg|layername=Layer experiences map"},"geometry":{"type":"Point","coordinates":[-413064.567448941990733,4926177.51063141040504]}},
-{"type":"Feature","properties":{"city":"Madrid","country":"Spain","category":"Professional experience","organization":"Action Against Hunger","role":"HR and Administration Assistant","period":"July 2024 - February 2025","description":"International Recruitment\nStaff Deployment\nHR Database Management","featured":null,"layer":"Aarhus","path":"C:\\Users\\flocc\\Desktop\\Experience_MAP\\Layer experiences map.gpkg|layername=Layer experiences map"},"geometry":{"type":"Point","coordinates":[-413064.567448941990733,4926177.51063141040504]}},
-{"type":"Feature","properties":{"fid":1,"city":"Aarhus","country":"Denmark","category":"Education","organization":"Aarhus University","role":"Master of Science (MSc) in Human Security","period":"September 2023 - June 2025","description":"","featured":null,"layer":"Aarhus","path":"C:\\Users\\flocc\\Desktop\\Experience_MAP\\Layer experiences map.gpkg|layername=Layer experiences map"},"geometry":{"type":"Point","coordinates":[1136114.169325771508738,7589786.164717251434922]}},
-{"type":"Feature","properties":{"fid":2,"city":"Rome","country":"Italy","category":"Education","organization":"La Sapienza - University of Rome","role":"BA Political Sciences and International Relations","period":"September 2019 - December2022","description":"Graduated with honours – 110/110 cum laude","featured":null,"layer":"Aarhus","path":"C:\\Users\\flocc\\Desktop\\Experience_MAP\\Layer experiences map.gpkg|layername=Layer experiences map"},"geometry":{"type":"Point","coordinates":[1392338.688728633336723,5146715.316268702037632]}},
-{"type":"Feature","properties":{"fid":3,"city":"Strasbourg","country":"France","category":"Education","organization":"Sciences Po Strasbourg","role":"Erasmus+ Exchange Programme","period":"September 2020 - June 2021","description":null,"featured":null,"layer":"Aarhus","path":"C:\\Users\\flocc\\Desktop\\Experience_MAP\\Layer experiences map.gpkg|layername=Layer experiences map"},"geometry":{"type":"Point","coordinates":[862605.42405314638745,6204646.297824120149016]}},
-{"type":"Feature","properties":{"fid":4,"city":"Paris","country":"France","category":"Professional experience","organization":"JEDI - Joint European Disruptive Initiative","role":"Green Policy Analyst","period":"November 2022 - May 2023","description":"R & RStudio\nSpatial Analysis\nFood Systems\nAgroecology\nSoil Health","featured":null,"layer":"Aarhus","path":"C:\\Users\\flocc\\Desktop\\Experience_MAP\\Layer experiences map.gpkg|layername=Layer experiences map"},"geometry":{"type":"Point","coordinates":[261914.004696789721493,6251095.01781515032053]}},
-{"type":"Feature","properties":{"fid":6,"city":"Dakar","country":"Senegal","category":"Professional experience","organization":"Action Against Hunger","role":"Food Security and Livelihoods (FSL) Data Analyst","period":"August 2026 - present","description":"Geospatial Data Analysis\nClimate Hazard Analysis\nSatellite & Meteorological Data\nFood Security & Vulnerability Analysis\nEarly Warning & Anticipatory Action MEAL","featured":null,"layer":"Aarhus","path":"C:\\Users\\flocc\\Desktop\\Experience_MAP\\Layer experiences map.gpkg|layername=Layer experiences map"},"geometry":{"type":"Point","coordinates":[-1948914.233351689297706,1659984.332003366667777]}},
-{"type":"Feature","properties":{"fid":7,"city":"Kigali","country":"Rwanda","category":"Professional experience","organization":"AVSI Foundation","role":"Junior MEAL Officer","period":"May 2025 - July 2026","description":"Logical Frameworks\nIndicator Development\nFCS & Food Security Scoring\nActivityInfo\nQGIS","featured":null,"layer":"Aarhus","path":"C:\\Users\\flocc\\Desktop\\Experience_MAP\\Layer experiences map.gpkg|layername=Layer experiences map"},"geometry":{"type":"Point","coordinates":[3352654.699296595528722,-217616.76813284563832]}}
-]
-}
+
+import json
+import math
+
+INPUT = "experiences.geojson"
+OUTPUT = "experiences_fixed.geojson"
+
+def to_wgs84(x, y):
+    lon = x / 20037508.34 * 180
+    lat = y / 20037508.34 * 180
+    lat = 180 / math.pi * (
+        2 * math.atan(math.exp(lat * math.pi / 180)) - math.pi / 2
+    )
+    return [lon, lat]
+
+with open(INPUT, "r", encoding="utf-8") as f:
+    data = json.load(f)
+
+features = []
+
+for feature in data["features"]:
+    props = feature["properties"].copy()
+    x, y = feature["geometry"]["coordinates"]
+
+    # Convert coordinates from EPSG:3857 to EPSG:4326
+    feature["geometry"]["coordinates"] = to_wgs84(x, y)
+
+    # Remove unnecessary QGIS metadata
+    props.pop("path", None)
+    props.pop("layer", None)
+    props.pop("featured", None)
+    props.pop("fid", None)
+
+    # Correct verified information
+    if props.get("city") == "Kigali":
+        props["period"] = "May 2025 – August 2026"
+
+    if props.get("city") == "Dakar":
+        props["role"] = (
+            "Technical & Data Analyst – "
+            "Food Security and Livelihoods (FSL)"
+        )
+
+    if props.get("city") == "Madrid":
+        props["period"] = props["period"].replace("-", "–")
+
+    if props.get("city") == "Rome":
+        props["period"] = "September 2019 – December 2022"
+
+    feature["properties"] = props
+    features.append(feature)
+
+# Create one Madrid marker with two separate experiences
+madrid = [f for f in features if f["properties"].get("city") == "Madrid"]
+others = [f for f in features if f["properties"].get("city") != "Madrid"]
+
+if len(madrid) == 2:
+    madrid_feature = madrid[0].copy()
+    madrid_feature["properties"] = {
+        "city": "Madrid",
+        "country": "Spain",
+        "category": "Professional experience",
+        "experiences": [
+            f["properties"] for f in madrid
+        ]
+    }
+    features = others + [madrid_feature]
+
+data["features"] = features
+data.pop("crs", None)
+
+with open(OUTPUT, "w", encoding="utf-8") as f:
+    json.dump(data, f, ensure_ascii=False, indent=2)
+
+print(f"GeoJSON corretto: {OUTPUT}")
+print(f"Numero di marker: {len(features)}")
+
