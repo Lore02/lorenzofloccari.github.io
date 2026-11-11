@@ -1,77 +1,109 @@
 
 import json
 import math
+from pathlib import Path
 
-INPUT = "experiences.geojson"
-OUTPUT = "experiences_fixed.geojson"
+# Files must be in the same folder as this script
+folder = Path(__file__).resolve().parent
+input_file = folder / "experiences.geojson"
+output_file = folder / "experiences_fixed.geojson"
 
-def to_wgs84(x, y):
-    lon = x / 20037508.34 * 180
-    lat = y / 20037508.34 * 180
-    lat = 180 / math.pi * (
-        2 * math.atan(math.exp(lat * math.pi / 180)) - math.pi / 2
+
+def convert_to_wgs84(x, y):
+    """Convert EPSG:3857 coordinates to EPSG:4326."""
+    lon = x / 20037508.342789244 * 180
+
+    lat = y / 20037508.342789244 * 180
+    lat = math.degrees(
+        2 * math.atan(math.exp(math.radians(lat))) - math.pi / 2
     )
+
     return [lon, lat]
 
-with open(INPUT, "r", encoding="utf-8") as f:
-    data = json.load(f)
 
-features = []
+try:
+    # Read original GeoJSON
+    with open(input_file, "r", encoding="utf-8") as f:
+        data = json.load(f)
 
-for feature in data["features"]:
-    props = feature["properties"].copy()
-    x, y = feature["geometry"]["coordinates"]
+    if data.get("type") != "FeatureCollection":
+        raise ValueError("The file is not a GeoJSON FeatureCollection.")
 
-    # Convert coordinates from EPSG:3857 to EPSG:4326
-    feature["geometry"]["coordinates"] = to_wgs84(x, y)
+    features = []
 
-    # Remove unnecessary QGIS metadata
-    props.pop("path", None)
-    props.pop("layer", None)
-    props.pop("featured", None)
-    props.pop("fid", None)
+    for feature in data["features"]:
+        props = feature["properties"].copy()
 
-    # Correct verified information
-    if props.get("city") == "Kigali":
-        props["period"] = "May 2025 – August 2026"
+        if feature["geometry"]["type"] != "Point":
+            raise ValueError("A feature is not a Point.")
 
-    if props.get("city") == "Dakar":
-        props["role"] = (
-            "Technical & Data Analyst – "
-            "Food Security and Livelihoods (FSL)"
-        )
+        x, y = feature["geometry"]["coordinates"]
+        coordinates = convert_to_wgs84(x, y)
 
-    if props.get("city") == "Madrid":
-        props["period"] = props["period"].replace("-", "–")
+        # Remove unnecessary QGIS metadata
+        for field in ["path", "layer", "featured", "fid"]:
+            props.pop(field, None)
 
-    if props.get("city") == "Rome":
-        props["period"] = "September 2019 – December 2022"
+        # Correct verified information
+        if props.get("city") == "Kigali":
+            props["period"] = "May 2025 – August 2026"
 
-    feature["properties"] = props
-    features.append(feature)
+        if props.get("city") == "Dakar":
+            props["role"] = (
+                "Technical & Data Analyst – "
+                "Food Security and Livelihoods (FSL)"
+            )
 
-# Create one Madrid marker with two separate experiences
-madrid = [f for f in features if f["properties"].get("city") == "Madrid"]
-others = [f for f in features if f["properties"].get("city") != "Madrid"]
+        if props.get("city") == "Rome":
+            props["period"] = "September 2019 – December 2022"
 
-if len(madrid) == 2:
-    madrid_feature = madrid[0].copy()
-    madrid_feature["properties"] = {
-        "city": "Madrid",
-        "country": "Spain",
-        "category": "Professional experience",
-        "experiences": [
-            f["properties"] for f in madrid
-        ]
-    }
-    features = others + [madrid_feature]
+        if props.get("city") == "Madrid":
+            props["period"] = props["period"].replace("-", "–")
 
-data["features"] = features
-data.pop("crs", None)
+        feature["properties"] = props
+        feature["geometry"]["coordinates"] = coordinates
+        features.append(feature)
 
-with open(OUTPUT, "w", encoding="utf-8") as f:
-    json.dump(data, f, ensure_ascii=False, indent=2)
+    # Merge the two Madrid experiences into one map marker
+    madrid = [
+        f for f in features
+        if f["properties"].get("city") == "Madrid"
+    ]
 
-print(f"GeoJSON corretto: {OUTPUT}")
-print(f"Numero di marker: {len(features)}")
+    others = [
+        f for f in features
+        if f["properties"].get("city") != "Madrid"
+    ]
 
+    if len(madrid) == 2:
+        madrid_feature = {
+            "type": "Feature",
+            "geometry": madrid[0]["geometry"],
+            "properties": {
+                "city": "Madrid",
+                "country": "Spain",
+                "category": "Professional experience",
+                "experiences": [
+                    f["properties"] for f in madrid
+                ]
+            }
+        }
+
+        features = others + [madrid_feature]
+
+    data["features"] = features
+    data.pop("crs", None)
+
+    with open(output_file, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+    print("SUCCESS!")
+    print("Output:", output_file)
+    print("Number of map markers:", len(features))
+
+except FileNotFoundError:
+    print("ERROR: experiences.geojson was not found.")
+    print("Put it in the same folder as this Python script.")
+
+except Exception as e:
+    print("ERROR:", str(e))
